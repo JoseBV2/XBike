@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+class UserDefault {
+    
+    static let shared = UserDefault()
+    
+    let userDefaults = UserDefaults.standard
+}

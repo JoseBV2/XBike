@@ -32,17 +32,37 @@ class CurrentRideController: UIViewController {
     var isUpdateUnstopped: Bool = true
     var firstLocations: [String] = [String]()
     var lastLocations: [String] = [String]()
+    let backgroundView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         spinner.startAnimating()
+        navigationController?.navigationBar.backgroundColor = .systemOrange
+        viewConfigurations()
         locationConfiguration()
         spinnerConfiguration()
         mapConfiguration()
+        title = "Current Ride"
         NotificationCenter.default.addObserver(self, selector: #selector(presentSecondAlert), name: NSNotification.Name("didPressStop"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentThirdAlert), name: NSNotification.Name("didPressStore"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didPressStart), name: NSNotification.Name("didPressStart"), object: nil)
         navigationItem.rightBarButtonItem = .init(image: UIImage(named: "add")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(startRiding))
+    }
+    
+    func viewConfigurations() {
+        backgroundView.backgroundColor = .systemOrange
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(backgroundView)
+        viewConstraints()
+    }
+    
+    func viewConstraints() {
+        NSLayoutConstraint.activate([
+            backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
     }
     
     @objc func startRiding() {
@@ -102,10 +122,18 @@ class CurrentRideController: UIViewController {
     
     func mapConfiguration() {
         self.camera = GMSCameraPosition.camera(withLatitude: latitude, longitude: longitude, zoom: 15.0)
-        self.mapView = GMSMapView.map(withFrame: self.view.frame, camera: camera)
+        self.mapView = GMSMapView.map(withFrame: self.backgroundView.frame, camera: camera)
         self.mapView.isMyLocationEnabled = true
-        self.view.addSubview(mapView)
-        self.view.sendSubviewToBack(mapView)
+        self.backgroundView.addSubview(mapView)
+        self.backgroundView.sendSubviewToBack(mapView)
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            mapView.topAnchor.constraint(equalTo: backgroundView.safeAreaLayoutGuide.topAnchor),
+            mapView.leadingAnchor.constraint(equalTo: backgroundView.safeAreaLayoutGuide.leadingAnchor),
+            mapView.trailingAnchor.constraint(equalTo: backgroundView.safeAreaLayoutGuide.trailingAnchor),
+            mapView.bottomAnchor.constraint(equalTo: backgroundView.safeAreaLayoutGuide.bottomAnchor)
+        ])
         mapView.delegate = self
     }
     
@@ -124,7 +152,6 @@ class CurrentRideController: UIViewController {
         locationManager.requestWhenInUseAuthorization()
         locationManager.stopUpdatingLocation()
     }
-    
 }
 
 extension CurrentRideController: CLLocationManagerDelegate {
@@ -141,22 +168,22 @@ extension CurrentRideController: CLLocationManagerDelegate {
             self.trackLocations.append(location)
             let index = self.trackLocations.count
             if index > 2 {
-                    self.trackingPath.add(self.trackLocations[index - 1].coordinate)
-                    self.trackingPath.add(self.trackLocations[index - 2].coordinate)
-
-                    self.trackingPolyline.path = self.trackingPath
-                    self.trackingPolyline.path = self.trackingPath
-                    self.trackingPolyline.strokeColor = .blue
-                    self.trackingPolyline.strokeWidth = 5.0
-                    self.trackingPolyline.map = self.mapView
-                }
+                self.trackingPath.add(self.trackLocations[index - 1].coordinate)
+                self.trackingPath.add(self.trackLocations[index - 2].coordinate)
+                
+                self.trackingPolyline.path = self.trackingPath
+                self.trackingPolyline.path = self.trackingPath
+                self.trackingPolyline.strokeColor = .blue
+                self.trackingPolyline.strokeWidth = 5.0
+                self.trackingPolyline.map = self.mapView
             }
+        }
         coordinateFirst = trackLocations.first!
         coordinateLast = trackLocations.last!
         spinner.stopAnimating()
         print("called")
         if isUpdateUnstopped {
-        locationManager.stopUpdatingLocation()
+            locationManager.stopUpdatingLocation()
         }
     }
     
@@ -185,7 +212,7 @@ extension CurrentRideController: CLLocationManagerDelegate {
 extension CurrentRideController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-//            self.mapView.animate(toLocation: .init(latitude: self.latitude, longitude: self.longitude))
+            //            self.mapView.animate(toLocation: .init(latitude: self.latitude, longitude: self.longitude))
         }
     }
 }

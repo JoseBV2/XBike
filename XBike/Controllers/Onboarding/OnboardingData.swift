@@ -25,6 +25,9 @@ class OnboardingData: UIViewController {
         descriptionLabel.textColor = .black
         descriptionLabel.text = currentText
         bikeImageView.image = UIImage(named: currentImage!)
+        if index == 3 {
+            
+        }
     }
 
 

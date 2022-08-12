@@ -36,20 +36,40 @@ class MyProgressControllerCell: UITableViewCell {
     }
     
     private func setupView() {
+        setDistanceConfigurations()
+        setTimeConfigurations()
+        setFirstLocationConfigurations()
+        setLastLocationConfigurations()
+    }
+}
+
+extension MyProgressControllerCell {
+    func setDistanceConfigurations() {
         distance.font = distance.font.withSize(22)
         distance.textColor = .black
         self.contentView.addSubview(distance)
+    }
+    
+    func setTimeConfigurations() {
         time.font = time.font.withSize(28)
         time.textColor = .black
         self.contentView.addSubview(time)
+    }
+    
+    func setFirstLocationConfigurations() {
         firstLocation.font = firstLocation.font.withSize(14)
         firstLocation.textColor = .black
         self.contentView.addSubview(firstLocation)
+    }
+    
+    func setLastLocationConfigurations() {
         lastLocation.font = lastLocation.font.withSize(14)
         lastLocation.textColor = .black
         self.contentView.addSubview(lastLocation)
     }
-    
+}
+
+extension MyProgressControllerCell {
     func constraints() {
         distance.translatesAutoresizingMaskIntoConstraints = false
         time.translatesAutoresizingMaskIntoConstraints = false
@@ -71,4 +91,3 @@ class MyProgressControllerCell: UITableViewCell {
         ])
     }
 }
-

@@ -9,16 +9,36 @@ import UIKit
 
 class MyProgressController: UIViewController {
     
+    let backgroundView = UIView()
     let tableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewConfigurations()
         tableViewConfiguration()
+        tableViewConstraints()
+        configureNavigationBar(largeTitleColor: .white, backgoundColor: .systemOrange, tintColor: .white, title: "My Progress", preferredLargeTitle: false)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         tableView.reloadData()
+    }
+    
+    func viewConfigurations() {
+        backgroundView.backgroundColor = .systemOrange
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(backgroundView)
+        viewConstraints()
+    }
+    
+    func viewConstraints() {
+        NSLayoutConstraint.activate([
+            backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
     }
     
     func tableViewConfiguration() {
@@ -27,11 +47,14 @@ class MyProgressController: UIViewController {
         tableView.backgroundColor = .white
         tableView.delegate = self
         tableView.dataSource = self
-        view.addSubview(tableView)
-        tableView.topAnchor.constraint(equalTo:view.topAnchor).isActive = true
-        tableView.leftAnchor.constraint(equalTo:view.leftAnchor).isActive = true
-        tableView.rightAnchor.constraint(equalTo:view.rightAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo:view.bottomAnchor).isActive = true
+        backgroundView.addSubview(tableView)
+    }
+    
+    func tableViewConstraints() {
+        tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        tableView.leftAnchor.constraint(equalTo: backgroundView.safeAreaLayoutGuide.leftAnchor).isActive = true
+        tableView.rightAnchor.constraint(equalTo: backgroundView.safeAreaLayoutGuide.rightAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo:backgroundView.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
 }
 
@@ -58,6 +81,7 @@ extension MyProgressController: UITableViewDataSource {
         let lastLocation = UserDefault.shared.userDefaults.object(forKey: "storeLastLocation") as! [String]
         cell.configure(distance: distance[indexPath.row], time: time[indexPath.row], fLocation: firstLocation[indexPath.row], lLocation: lastLocation[indexPath.row])
         cell.backgroundColor = .white
+        cell.selectionStyle = .none
         return cell
     }
 }

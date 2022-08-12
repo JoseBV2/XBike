@@ -308,7 +308,6 @@ class MyAlert {
         startButton.isEnabled = true
         UIView.animate(withDuration: 0.25) {
             MyAlert.alertView.frame = CGRect(x: 40, y: targetView.frame.height, width: targetView.frame.width - 80, height: 300)
-            //                MyAlert.alertView.alpha = 0
         } completion: { done in
             if done {
                 for item in MyAlert.alertView.subviews {
